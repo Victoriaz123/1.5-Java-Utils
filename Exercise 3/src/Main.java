@@ -1,7 +1,11 @@
 public class Main {
     public static void main(String[] args) {
 
-        String relativePath = "../S1.04.Testing.Exercici1";
+        if (args.length < 1) {
+            System.err.println("Please provide the relative path of the directory as a command-line argument.");
+            return;
+        }
+        String relativePath = args[0];
         String outputFile = "output.txt";
         ListDirectory.listDirectoryContents(relativePath,outputFile);
     }

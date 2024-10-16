@@ -14,17 +14,17 @@ public class ListDirectory {
     public static void listDirectoryContents(String relativePath){
     Path dir =Paths.get(relativePath.replace("/", File.separator).replace("\\",File.separator));
     List<String> fileNames = new ArrayList<>();
+
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
         for (Path file: stream) {
             fileNames.add(file.getFileName().toString());
         }
-    } catch (IOException | DirectoryIteratorException x){
-        System.err.println("Error reading directory: " + x);
+    } catch (IOException | DirectoryIteratorException e) {
+        System.err.println("Error reading directory: " + e.getMessage());
         return;
-        }
+    }
+
         Collections.sort(fileNames);
-        for (String fileName : fileNames) {
-           System.out.println(fileName);
-      }
+        fileNames.forEach(System.out::println);
     }
 }

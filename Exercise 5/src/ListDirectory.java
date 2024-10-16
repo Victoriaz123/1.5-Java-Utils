@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -56,7 +57,6 @@ public class ListDirectory implements Serializable {
         }
     }
 
-
     public static void serializeDirectoryList(ListDirectory listDirectory, String filePath) {
         try (FileOutputStream fileOutputStream  = new FileOutputStream(filePath);
              ObjectOutputStream objectOutputStream  = new ObjectOutputStream(fileOutputStream)) {
@@ -67,17 +67,17 @@ public class ListDirectory implements Serializable {
         }
     }
 
-    public static ListDirectory deserializeDirectoryList(String filePath) {
+    public static Optional<ListDirectory> deserializeDirectoryList(String filePath) throws DeserializationException {
         try (FileInputStream fileInputStream = new FileInputStream(filePath);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
-            return (ListDirectory) objectInputStream.readObject();
+            return Optional.of((ListDirectory) objectInputStream.readObject());
         } catch (IOException e) {
-            System.err.println("Error during deserialization: " + e.getMessage());
+            throw new DeserializationException("Error during deserialization: " + e.getMessage(), e);
         } catch (ClassNotFoundException e) {
-            System.err.println("Class not found: " + e.getMessage());
+            throw new DeserializationException("Class not found: " + e.getMessage(), e);
         }
-        return null;
     }
+
 
     public static void readTextFile(String filePath) {
         Path path = Paths.get(filePath);
@@ -89,6 +89,12 @@ public class ListDirectory implements Serializable {
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    public static class DeserializationException extends Exception {
+        public DeserializationException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 }
